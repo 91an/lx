@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"      
+ "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+ 
+<mapper namespace="cn.tedu.store.mapper.AddressMapper">
+	
+	<resultMap type="cn.tedu.store.entity.Address" id="AddressEntityMap">
+		<id column="aid" property="aid"/>
+		<result column="province_name" property="provinceName"/> 
+		<result column="province_id" property="provinceId"/>
+		<result column="city_name" property="cityName"/>
+		<result column="city_id" property="cityId"/>
+		<result column="area_name" property="areaName"/>
+		<result column="area_id" property="areaId"/>
+		<result column="is_default" property="isDefault"/>
+		<result column="created_user" property="createdUser"/>
+		<result column="created_time" property="createdTime"/>
+		<result column="modified_user" property="modifiedUser"/>
+		<result column="modified_time" property="modifiedTime"/>
+	</resultMap>
+	<!-- 插入用户数据 -->
+	<insert id="insert" useGeneratedKeys="true" keyProperty="aid">
+		insert into t_address 
+			(uid,name,
+			province_name,province_id,
+			city_name,city_id,
+			area_name,area_id,
+			zip,address,
+			phone,tel,
+			tag,is_default,
+			created_user,created_time,
+			modified_user,modified_time
+			) values (
+			#{uid},#{name},
+			#{provinceName},#{provinceId},
+			#{cityName},#{cityId},
+			#{areaName},#{areaId},
+			#{zip},#{address},
+			#{phone},#{tel},
+			#{tag},#{isDefault},
+			#{createdUser},#{createdTime},
+			#{modifiedUser},#{modifiedTime})
+	</insert>
+	
+	<update id="updateDefaultByAid">
+		update
+			t_address
+		set
+			is_default=1,modified_user=#{modifiedUser},modified_time=#{modifiedTime}
+		where
+			aid=#{aid}
+	</update>
+	
+	<update id="updateNonDefaultByUid">
+		update
+			t_address
+		set
+			is_default=0
+		where
+			uid=#{uid}
+	</update>
+	
+	<delete id="deleteByAid">
+		delete from 
+			t_address 
+		where 
+			aid=#{aid}
+	</delete>
+	
+	<select id="findLastModifiedByUid" resultMap="AddressEntityMap">
+		select
+			*
+		from
+			t_address
+		where
+			uid=#{uid}
+		order by
+			modified_time desc
+		limit
+			0,1
+	</select>
+	
+	<select id="findByAid" resultMap="AddressEntityMap">
+		select 
+			* 
+		from 
+			t_address 
+		where
+			aid=#{aid}
+	</select>
+	
+	<!-- 根据给定的用户名查询匹配到的数据 -->
+	<select id="countByUid" resultType="java.lang.Integer">
+		select 
+			count(*) 
+		from 
+			t_address 
+		where 
+			uid=#{uid}
+	</select>
+	
+	<select id="findByUid" resultMap="AddressEntityMap">
+		select
+			*
+		from
+			t_address
+		where
+			uid=#{uid}
+		order by
+			is_default desc,
+			created_time desc
+	</select>
+	
+	
+	
+</mapper>
